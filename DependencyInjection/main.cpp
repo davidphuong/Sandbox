@@ -36,7 +36,7 @@ private:
 class IDrawing {
 public:
 	IDrawing() :
-		m_drawing(new Drawing)
+		m_drawing(boost::make_unique<Drawing>())
 	{}
 
 	void draw(ShapeType type) {
@@ -47,19 +47,18 @@ public:
 		case ShapeType::triangle:
 			m_drawing->draw_shape(std::make_unique<Triangle>());
 			break;
-		default:
-			// Empty
 		}
 	}
 
 private:
-	Drawing* m_drawing{ nullptr };
+	std::unique_ptr<Drawing> m_drawing;
 };
 
 int main(int argc, char* argv[]) {
 	IDrawing drawing;
+	drawing.draw(ShapeType::circle);
 	drawing.draw(ShapeType::triangle);
 
 	system("pause");
-	return 0;
+	return EXIT_SUCCESS;
 }
