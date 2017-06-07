@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <functional>
 
 class AnimalInterface {
 public:
@@ -70,7 +71,7 @@ public:
 		Register("Spider", &Spider::Create);
 	}
 
-	void Register(const std::string& animal_name, std::shared_ptr<AnimalInterface>(*CreateAnimalFn)(void)) {
+	void Register(const std::string& animal_name, const std::function<std::shared_ptr<AnimalInterface>()>& CreateAnimalFn) {
 		factory_map_[animal_name] = CreateAnimalFn;
 	}
 
@@ -79,11 +80,11 @@ public:
 		if (it == factory_map_.end()) {
 			return nullptr;
 		}
-		return it->second();
+		return (it->second)();
 	}
 
 private:
-	std::map<std::string, std::shared_ptr<AnimalInterface>(*)(void)> factory_map_;
+	std::map<std::string, std::function<std::shared_ptr<AnimalInterface>()>> factory_map_;
 };
 
 int main(int argc, char* argv[]) {
@@ -93,7 +94,6 @@ int main(int argc, char* argv[]) {
 
 	auto horse = factory.CreateAnimal("Horse");
 	horse->Speak();
-
 
 	system("pause");
 	return EXIT_SUCCESS;
