@@ -8,10 +8,16 @@ class AnimalInterface {
 public:
 	virtual int GetNumberOfLegs() const = 0;
 	virtual void Speak() = 0;
+	virtual void GetAge() = 0; // Not the best example
 };
 
 class Cat : public AnimalInterface {
 public:
+	Cat(size_t age) :
+		age_{ age }
+	{
+	}
+
 	int GetNumberOfLegs() const override {
 		return 4;
 	}
@@ -20,11 +26,23 @@ public:
 		std::cout << "Meow" << std::endl;
 	}
 
-	static std::shared_ptr<AnimalInterface> Create() { return std::make_shared<Cat>(); }
+	void GetAge() override {
+		std::cout << age_ << std::endl;
+	}
+
+	static std::shared_ptr<AnimalInterface> Create(size_t age) { return std::make_shared<Cat>(age); }
+
+private:
+	size_t age_;
 };
 
 class Dog : public AnimalInterface {
 public:
+	Dog(size_t age) :
+		age_{ age }
+	{
+	}
+
 	int GetNumberOfLegs() const override {
 		return 4;
 	}
@@ -33,11 +51,23 @@ public:
 		std::cout << "Woof" << std::endl;
 	}
 
-	static std::shared_ptr<AnimalInterface> Create() { return std::make_shared<Dog>(); }
+	void GetAge() override {
+		std::cout << age_ << std::endl;
+	}
+
+	static std::shared_ptr<AnimalInterface> Create(size_t age) { return std::make_shared<Dog>(age); }
+
+private:
+	size_t age_;
 };
 
 class Spider : public AnimalInterface {
 public:
+	Spider(size_t age) :
+		age_{ age }
+	{
+	}
+
 	int GetNumberOfLegs() const override {
 		return 8;
 	}
@@ -46,11 +76,23 @@ public:
 		std::cout << std::endl;
 	}
 
-	static std::shared_ptr<AnimalInterface> Create() { return std::make_shared<Spider>(); }
+	void GetAge() override {
+		std::cout << age_ << std::endl;
+	}
+
+	static std::shared_ptr<AnimalInterface> Create(size_t age) { return std::make_shared<Spider>(age); }
+
+private:
+	size_t age_;
 };
 
 class Horse : public AnimalInterface {
 public:
+	Horse(size_t age) :
+		age_{ age }
+	{
+	}
+
 	int GetNumberOfLegs() const override {
 		return 4;
 	}
@@ -59,16 +101,23 @@ public:
 		std::cout << "A horse is a horse, of course, of course." << std::endl;
 	}
 
-	static std::shared_ptr<AnimalInterface> Create() { return std::make_shared<Horse>(); }
+	void GetAge() override {
+		std::cout << age_ << std::endl;
+	}
+
+	static std::shared_ptr<AnimalInterface> Create(size_t age) { return std::make_shared<Horse>(age); }
+
+private:
+	size_t age_;
 };
 
 class AnimalFactory {
 public:
 	AnimalFactory() {
-		Register("Horse", &Horse::Create);
-		Register("Cat", &Cat::Create);
-		Register("Dog", &Dog::Create);
-		Register("Spider", &Spider::Create);
+		Register("Horse", std::bind(&Horse::Create, 1));
+		Register("Cat", std::bind(&Cat::Create, 2));
+		Register("Dog", std::bind(&Dog::Create, 3));
+		Register("Spider", std::bind(&Spider::Create, 4));
 	}
 
 	void Register(const std::string& animal_name, const std::function<std::shared_ptr<AnimalInterface>()>& CreateAnimalFn) {
@@ -91,9 +140,11 @@ int main(int argc, char* argv[]) {
 	AnimalFactory factory;
 	auto dog = factory.CreateAnimal("Dog");
 	dog->Speak();
+	dog->GetAge();
 
 	auto horse = factory.CreateAnimal("Horse");
 	horse->Speak();
+	horse->GetAge();
 
 	system("pause");
 	return EXIT_SUCCESS;
