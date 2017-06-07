@@ -1,5 +1,10 @@
 #include <iostream>
 #include <boost/make_unique.hpp>
+#include <UnitTest++/UnitTest++.h>
+
+TEST(fail) {
+	CHECK(false);
+}
 
 enum class ShapeType { circle, triangle };
 
@@ -58,6 +63,8 @@ int main(int argc, char* argv[]) {
 	IDrawing drawing;
 	drawing.draw(ShapeType::circle);
 	drawing.draw(ShapeType::triangle);
+
+	UnitTest::RunAllTests();
 
 	system("pause");
 	return EXIT_SUCCESS;
